@@ -32,9 +32,11 @@ $(function () {
             success: function (backData) {
                 console.log(backData);
                 if (backData.code == 200) {
-                    $('#login_msg').modal();
                     $(".modal-body>p").text("登录成功");
+                    $('#login_msg').modal();
                     $('#login_msg').on('hidden.bs.modal', function () {
+                        // 1，将token存入本地
+                        localStorage.setItem('token', backData.token);
                         window.location.href = './index.html';
                     });
 
