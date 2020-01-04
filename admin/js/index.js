@@ -7,7 +7,7 @@ $(function () {
         type: 'get',
         dataType: 'json',
         success: function (backData) {
-            console.log(backData);
+            // console.log(backData);
             // 数据响应之后渲染页面。
             $(".user_info>img").attr("src", backData.data.userPic);
             $(".user_info>span").html("欢迎&nbsp;&nbsp;" + backData.data.nickname);

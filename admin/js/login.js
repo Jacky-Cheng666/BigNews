@@ -30,7 +30,7 @@ $(function () {
                 password: $pwd
             },
             success: function (backData) {
-                console.log(backData);
+                // console.log(backData);
                 if (backData.code == 200) {
                     $(".modal-body>p").text("登录成功");
                     $('#login_msg').modal();
