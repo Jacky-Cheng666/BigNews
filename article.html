@@ -13,7 +13,7 @@
 
 <body>
     <div class="header">
-        <a href="#" class="logo fl"><img src="images/logo.png" alt="logo"></a>
+        <a href="./index.html" class="logo fl"><img src="images/logo.png" alt="logo"></a>
         <div class="search_form fl">
             <input type="text" class="search_txt" placeholder="黑洞照片">
             <button class="search_btn"><i class="fa fa-search"></i></button>
@@ -209,6 +209,105 @@
     <script src="./js/template-web.js"></script>
     <script src="./js/jquery-1.12.4.min.js"></script>
 
+    <!-- 文章详情模块模板引擎 -->
+    <script id="article_info" type="text/html">
+        <div class="article_info">
+            {{ data.author }} 发布于 {{ data.date }}&nbsp;&nbsp;&nbsp;分类: {{data.category}}&nbsp;&nbsp;&nbsp;阅读:
+                    ({{data.read}})&nbsp;&nbsp;&nbsp;评论: ({{data.comments}})
+        </div>
+    </script>
+
+    <!-- 文章上一篇，下一篇模板引擎-->
+    <script id="next_last" type="text/html">
+        上一篇： <a href="./article.html?id={{data.prev.id}}">{{ data.prev.title }}</a><br>
+        {{ if data.next}}
+        下一篇： <a href="./article.html?id={{data.next.id}}">{{ data.next.title }}</a>
+        {{ /if }}
+        
+        
+    </script>
+    <!-- 评论列表模板引擎 -->
+    <script id="comment_list" type="text/html">
+        {{ each data v}}
+        <div class="comment_detail_list">
+            <div class="person_pic fl">{{ v.author[0]}}</div>
+            <div class="name_time fl"><b>{{ v.author }}</b><span>{{ v.date }}</span></div>
+            <div class="comment_text fl">
+                {{ v.content }}
+            </div>
+        </div>
+        {{ /each }}
+    </script>
+    <script>
+        // 1，获取本篇文章的id
+        var id = window.location.href.split("=")[1];
+        // 2，页面一加载发送ajax请求，请求文章详细信息。
+        $.ajax({
+            url: 'http://localhost:8080/api/v1/index/article',
+            type: 'get',
+            dataType: 'json',
+            data: {
+                id: id
+            },
+            success: function (backData) {
+                // console.log(backData);
+                // 渲染页面
+                $(".article_title").html(backData.data.title);
+                $(".article_info").html(template("article_info", backData));
+                $(".article_con").html(backData.data.content);
+                $(".article_links").html(template("next_last", backData));
+            }
+        });
+        // 3，加载评论列表
+        $.ajax({
+            url: 'http://localhost:8080/api/v1/index/get_comment',
+            type: 'get',
+            dataType: 'json',
+            data: {
+                articleId: id
+            },
+            success: function (backData) {
+                // 渲染页面
+                $(".comment_count").text(backData.data.length + "条评论");
+                $(".comment_list_con").html(template("comment_list", backData));
+            }
+        });
+
+        // 4，添加评论功能
+
+        // 评论按钮注册点击事件
+        $(".comment_sub").click(function (e) {
+            e.preventDefault();
+            var $username = $(".comment_name").val();
+            var $comm_cont = $(".comment_input").val();
+            if ($username.length == 0 || $comm_cont.length == 0) {
+                alert("请输入用户名和评论内容");
+                return;
+            }
+            // 发送ajax请求。
+            $.ajax({
+                url: 'http://localhost:8080/api/v1/index/post_comment',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    author: $username,
+                    content: $comm_cont,
+                    articleId: id,
+                },
+                success: function (backData) {
+                    console.log(backData);
+                    if (backData.code == 201) {
+                        alert("发表成功,请等待审核");
+                        window.location.reload();
+                        var $username = $(".comment_name").val('');
+                        var $comm_cont = $(".comment_input").val('');
+                    }
+                }
+            });
+
+        });
+
+    </script>
 </body>
 
 </html>

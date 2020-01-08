@@ -14,6 +14,13 @@
     <script src="./libs/jquery-1.12.4.min.js"></script>
     <!-- 模板引擎 -->
     <script src="./libs/template-web.js"></script>
+    <script src="./libs/http.js"></script>
+    <script src="./js/article_release.js"></script>
+    <!-- 导入jedata和wangEdit插件 -->
+    <link rel="stylesheet" href="./libs/jedate/css/jeDate-test.css">
+    <link rel="stylesheet" href="./libs/jedate/css/jedate.css">
+    <script src="./libs/jedate/js/jedate.js"></script>
+    <script src="./libs/wangEditor.min.js"></script>
 </head>
 
 <body>
@@ -26,7 +33,7 @@
                 <div class="form-group">
                     <label for="inputTitle" class="col-sm-2 control-label">文章标题：</label>
                     <div class="col-sm-10">
-                        <input type="text" name="title" class="form-control title" id="inputTitle" value="文章标题文字">
+                        <input type="text" name="title" class="form-control title" id="inputTitle" placeholder="文章标题文字">
                     </div>
                 </div>
                 <div class="form-group">
@@ -51,11 +58,20 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">发布时间：</label>
                     <div class="col-sm-4">
+                        <div class="jeinpbox">
+                            <input type="text" class="jeinput" id="testico" placeholder="YYYY-MM-DD" name="date">
+                            <div class="icons jebtns"
+                                onclick="jeDate('#testico',{trigger:false,format: 'YYYY-MM-DD',zIndex: 20991,})">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
                     <div class="col-sm-10">
+                        <div id="editor">
+
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -67,6 +83,26 @@
             </form>
         </div>
     </div>
+    <script id="category_list" type="text/html">
+        {{each data v}}
+        <option value="{{ v.id }}">{{ v.name }}</option>
+        {{ /each }}
+    </script>
+    <script>
+        // 日期插件初始化js代码
+        jeDate('#testico',
+            {
+                onClose: false,
+                trigger: "click",
+                format: 'YYYY-MM-DD',
+                zIndex: 20991,
+                isinitVal: true
+            })
+        // wangEdit富文本初始化
+        var E = window.wangEditor
+        var editor = new E('#editor')
+        editor.create()
+    </script>
 </body>
 
 </html>

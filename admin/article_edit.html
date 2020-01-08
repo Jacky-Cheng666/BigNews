@@ -16,6 +16,11 @@
     <script src="./libs/template-web.js"></script>
     <script src="./libs/http.js"></script>
     <script src="./js/article_edit.js"></script>
+    <!-- 引入日期控件等元素 -->
+    <link rel="stylesheet" href="./libs/jedate/css/jeDate-test.css">
+    <link rel="stylesheet" href="./libs/jedate/css/jedate.css">
+    <script src="./libs/jedate/js/jedate.js"></script>
+    <script src="./libs/wangEditor.min.js"></script>
 </head>
 
 <body>
@@ -53,11 +58,21 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">发布时间：</label>
                     <div class="col-sm-4">
+                        <!-- 日期插件 -->
+                        <div class="jeinpbox">
+                            <input type="text" class="jeinput" id="testico" placeholder="YYYY-MM-DD">
+                            <div class="icons jebtns"
+                                onclick="jeDate('#testico',{trigger:false,format: 'YYYY-MM-DD',zIndex: 209900})">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputEmail3" class="col-sm-2 control-label">文章内容：</label>
                     <div class="col-sm-10">
+                        <div id="editor">
+
+                        </div>
                     </div>
                 </div>
                 <div class="form-group">
@@ -69,6 +84,31 @@
             </form>
         </div>
     </div>
+    <!-- 文章类别下拉框模板引擎 -->
+    <script id="category_list" type="text/html">
+        {{ each data v}}
+        <option value="{{ v.id }}">{{ v.name }}</option>
+        {{ /each }}
+    </script>
+
+    <script>
+        // jedate日期插件初始化
+        // (1)发现问题：发现一个bug，wangeditor插件会遮盖jedate日期插件。
+        // (2)分析问题：z-index层级导致
+        // (3)解决问题：设置日期插件的层级比编辑插件高
+        jeDate('#testico', {
+            onClose: false,
+            format: 'YYYY-MM-DD',
+            zIndex: 209900,
+            isinitVal: true
+        })
+        // wangeditor富文本插件初始化
+        var E = window.wangEditor
+        var editor = new E('#editor')
+        // 或者 var editor = new E( document.getElementById('editor') )
+        editor.create()
+    </script>
 </body>
+
 
 </html>
